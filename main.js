@@ -58,15 +58,30 @@ const addTask = (e) => {
         tasklist = [... tasklist , { name: taskName, id: Date.now()}]; // Si el campo no está vacio, agarra el array (tasklist), hacemos un spred operator para que mguarde los valres antiguos y también los nuevos. Y que la guarde en éste formato de objeto y now. En consola voy viendo todo. 
         renderTaskList(); // llamo aquí dentro la function que cree para que imprima las tareas en pantalla. 
         addForm.reset(); // para que se borre el input cuando paso la tarea, es algo estético que queda lindo. 
-        toggleDeleteAllButton(); 
+        toggleDeleteAllButton(); // tengo que validar para que no aparezca el btn 
     
     
         //console.log (tasklist);
     }
 };
 
-// 8° remover All task 
+// 8° para que no aparezca el btn "remove all" cuando no hay task´s
 
+const toggleDeleteAllButton = () => {
+    if( !tasklist.length){
+        deleteAllBtn.classList.add ("hidden");
+        return;
+    }
+    deleteAllBtn.classList.remove ("hidden");
+}
+
+// 9° hacer funcional el btn de Remove All
+
+const removeAll = () =>{
+    tasklist = [];
+    renderTaskList();
+    toggleDeleteAllButton(); // tengo que volver a validar SIEMPRE
+} 
 
  
 // 7° remover tarea individualmente
@@ -81,6 +96,7 @@ const removeTask = (e) =>{
 
     tasklist = tasklist.filter (task => task.id !== filterId ); // por cada tarea agarra el task id y filtra todas las que NO SEAN el filter ID. 
     renderTaskList();
+    toggleDeleteAllButton();
     
 }
 
@@ -91,6 +107,8 @@ const removeTask = (e) =>{
 const init = () =>{
     addForm.addEventListener ( "submit", addTask); // primero quiero llamar al formulario, voy a capturar cada input donde se van a sumar las tareas. 
     tasksContainer.addEventListener ("click" , removeTask); // para remover cada tarea
+    document.addEventListener ("DOMContentLoaded", toggleDeleteAllButton); // para que al iniciar la pag no aparezca el btn de borrar todo
+    deleteAllBtn.addEventListener ("click", removeAll); // escuchador de evento para el btn de remove all. 
     
 
 
