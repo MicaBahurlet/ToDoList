@@ -1,6 +1,6 @@
-// 1. Tengo que traer los elementos con los que voy a trabajar. Dewfinir las variables de los elementos. 
+// 1. Tengo que traer los elementos con los que voy a trabajar, básicamente es Definir las variables de los elementos. 
 
-// Defino el nombre de una constante y traigo del document el elemento con .queryselector  y dentro de (el nombre de la clase que tengo en HTML)
+// Defino el nombre de una constante ( que se la doy ahora, el nombre que yo quiqero) y traigo del document el elemento con .queryselector  y dentro de (el nombre de la clase que tengo en HTML)
 
 const taskInput = document.querySelector (".input-text"); // primero el input, donde voy a escribir la terea De aquí voy a sacar el valor. La clase ya la tengo definida en el HTML. Ceo una nueva const.
 const addForm = document.querySelector (".add-form"); //  luego voy a agarrar al formulario, ya que el btn se comporta dentro del form como un submit. 
@@ -9,7 +9,15 @@ const deleteAllBtn = document.querySelector (".deleteAll-btn"); // por último a
 
 //2.¿Dónde voy a guardar las tareas que se vayan agregando? tengo que guardar cada una de las tareas en un Array. ya que necesito guardar los datos. 
 
-let tasklist = []; // con let y no const porque va a ir variando y modificandose a medida de sumar tareas. 
+let tasklist = JSON.parse(localStorage.getItem("tasks")) || []; // con let y no const porque va a ir variando y modificandose a medida de sumar tareas. // 
+
+//11. ANTES: let tasklist = []; AHORA Tengo que traerme del Local Storage los datos = el Array que yo tenga va a ser igual a los datos del LocalStorage, en el caso de que no tenga nada || vacío.
+
+//10. Crear una function para el local storage, la cual deberé aplicar a cada una de las otras fuctions: ej: la de borrar tareas, la de borrar una sola tarea. 
+
+const saveLocalStorage = () => { 
+    localStorage.setItem("tasks", JSON.stringify(tasklist)); // si yo le paso como parametro sólo el nombre de "tasklist" no funciona por que el Local Storage SOLO lee strings
+}; // hasta acá tengo las tareas guardadas en el Local Storage pero al recargar la pag no las renderiza. 
 
 // Después de la primer funcion addTask, Crear la segunda fucnión para renderizar - con function generadora. 
 // por un lado tenemos el HTML y por el otro la funcion que mapeaba. 
@@ -59,6 +67,7 @@ const addTask = (e) => {
         renderTaskList(); // llamo aquí dentro la function que cree para que imprima las tareas en pantalla. 
         addForm.reset(); // para que se borre el input cuando paso la tarea, es algo estético que queda lindo. 
         toggleDeleteAllButton(); // tengo que validar para que no aparezca el btn 
+        saveLocalStorage ();
     
     
         //console.log (tasklist);
@@ -81,7 +90,11 @@ const removeAll = () =>{
     tasklist = [];
     renderTaskList();
     toggleDeleteAllButton(); // tengo que volver a validar SIEMPRE
+    saveLocalStorage ();
 } 
+
+
+
 
  
 // 7° remover tarea individualmente
@@ -97,6 +110,7 @@ const removeTask = (e) =>{
     tasklist = tasklist.filter (task => task.id !== filterId ); // por cada tarea agarra el task id y filtra todas las que NO SEAN el filter ID. 
     renderTaskList();
     toggleDeleteAllButton();
+    saveLocalStorage ();
     
 }
 
@@ -105,6 +119,7 @@ const removeTask = (e) =>{
 // lo tengo que tener abajo, porque al utilizar funcion flecha me pisaría las otras const. 
 
 const init = () =>{
+    document.addEventListener ("DOMContentLoaded", renderTaskList); // Es lo último pero lo pongo al principio. Cuando cargue la pág quiero que me imprima la function renderTaskList
     addForm.addEventListener ( "submit", addTask); // primero quiero llamar al formulario, voy a capturar cada input donde se van a sumar las tareas. 
     tasksContainer.addEventListener ("click" , removeTask); // para remover cada tarea
     document.addEventListener ("DOMContentLoaded", toggleDeleteAllButton); // para que al iniciar la pag no aparezca el btn de borrar todo
@@ -113,4 +128,4 @@ const init = () =>{
 
 
 };
-init (); // NECESITO inicializarla con éste comando. sino NADA funciona. 
+init (); // Después de crear la primera automáticamente NECESITO inicializarla con éste comando. sino NADA funciona. 
