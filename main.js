@@ -11,15 +11,18 @@ const deleteAllBtn = document.querySelector (".deleteAll-btn"); // por último a
 
 let tasklist = JSON.parse(localStorage.getItem("tasks")) || []; // con let y no const porque va a ir variando y modificandose a medida de sumar tareas. // 
 
-//11. ANTES: let tasklist = []; AHORA Tengo que traerme del Local Storage los datos = el Array que yo tenga va a ser igual a los datos del LocalStorage, en el caso de que no tenga nada || vacío.
+//11. ANTES: let tasklist = []; AHORA Tengo que traerme del Local Storage los datos, por eso el .parse que lo transforma en objeto = el Array que yo tenga va a ser igual a los datos del LocalStorage, en el caso de que no tenga nada || vacío.
 
 //10. Crear una function para el local storage, la cual deberé aplicar a cada una de las otras fuctions: ej: la de borrar tareas, la de borrar una sola tarea. 
 
 const saveLocalStorage = () => { 
     localStorage.setItem("tasks", JSON.stringify(tasklist)); // si yo le paso como parametro sólo el nombre de "tasklist" no funciona por que el Local Storage SOLO lee strings
-}; // hasta acá tengo las tareas guardadas en el Local Storage pero al recargar la pag no las renderiza. 
+}; // hasta acá tengo las tareas guardadas en el Local Storage pero al recargar la pag no las renderiza. quiero guardar la lista de tareas con el nombre "tasks"
 
-// Después de la primer funcion addTask, Crear la segunda fucnión para renderizar - con function generadora. 
+
+
+
+// 4.1 Template html - Después de la primer funcion addTask, Crear la segunda fucnión para renderizar - con function generadora. 
 // por un lado tenemos el HTML y por el otro la funcion que mapeaba. 
 
 const createTask = (task) => { // creo la funcion de crear tarea y al task nname y al ID que va a tener esa tarea ingresada. Con el Spred Operator definí a la tarea como objeto y le di un id.
@@ -36,7 +39,7 @@ const createTask = (task) => { // creo la funcion de crear tarea y al task nname
 // 5° funcion para renderizar
 const renderTaskList = () =>{ // agarro el comntenedor y deentro del UL le voy a cambiar el inner HTML .  
     tasksContainer.innerHTML = tasklist.map(task => createTask (task)).join(""); //Voy a agarrar mi array de tarea y voy a mapear una tarea, y de donde viene esa tarea? de la const addTask. JOIN para que no muestre los espacios
-}
+} // 
 
 
 // 6° Validaciones de tarea
@@ -44,7 +47,7 @@ const renderTaskList = () =>{ // agarro el comntenedor y deentro del UL le voy a
 const isValidTask = (taskName) =>{  // por parametro recibe la funcion que ya cree "taskName"
     let isValid = true; // para hacer un manejador
 
-    if(!taskName.length){ // si no tiene largo no entres 
+    if(!taskName.length){ // si no tiene largo no entres pero si está vacío imprimí esto:
         alert ("Por favor, ingresa una tarea.");
         isValid = false;
     } else if (tasklist.some (task => task.name.toLowerCase() === taskName.toLowerCase()) // utilizamos Some, "si alguna tarea es igual al task name en minusculas es RE igual a la tarea que estemos pasando en minuscolas"
@@ -59,8 +62,8 @@ const isValidTask = (taskName) =>{  // por parametro recibe la funcion que ya cr
 
 //4° PRIMERA función inicializadora, capturar el valor de un input. 
 const addTask = (e) => { 
-    e.preventDefault(); // NECESITO cortar con el comportamiento por defecto de un formulario, cada vez que apreto enviar se refresca la página. con e.preventDefault lo soluciono.
-    const taskName = taskInput.value.trim(); //me traigo el valor que se ingresa en el input. /// Cuadno sale un error en Value es que no está encontrando el elemento, hay un error de tipeo.
+    e.preventDefault(); // PRIMERO NECESITO cortar con el comportamiento por defecto de un formulario, cada vez que apreto enviar se refresca la página. con e.preventDefault lo soluciono.
+    const taskName = taskInput.value.trim(); //me traigo el valor que se ingresa en el input. /// Cuadno sale un error en Value es que no está encontrando el elemento, hay un error de tipeo. un Trim para que no haya espacios
    
     if (isValidTask (taskName)){ // me llamo a la funcion validadora, si es tru va a guardar las tareas en el array y las va a renderizar, si es falso no hace nada. 
         tasklist = [... tasklist , { name: taskName, id: Date.now()}]; // Si el campo no está vacio, agarra el array (tasklist), hacemos un spred operator para que mguarde los valres antiguos y también los nuevos. Y que la guarde en éste formato de objeto y now. En consola voy viendo todo. 
@@ -120,7 +123,7 @@ const removeTask = (e) =>{
 
 const init = () =>{
     document.addEventListener ("DOMContentLoaded", renderTaskList); // Es lo último pero lo pongo al principio. Cuando cargue la pág quiero que me imprima la function renderTaskList
-    addForm.addEventListener ( "submit", addTask); // primero quiero llamar al formulario, voy a capturar cada input donde se van a sumar las tareas. 
+    addForm.addEventListener ( "submit", addTask); // PRIMERO  quiero llamar al formulario, voy a capturar cada input donde se van a sumar las tareas. 
     tasksContainer.addEventListener ("click" , removeTask); // para remover cada tarea
     document.addEventListener ("DOMContentLoaded", toggleDeleteAllButton); // para que al iniciar la pag no aparezca el btn de borrar todo
     deleteAllBtn.addEventListener ("click", removeAll); // escuchador de evento para el btn de remove all. 
